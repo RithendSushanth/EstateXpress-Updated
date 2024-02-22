@@ -46,6 +46,14 @@
       }
     }
   }
+  .carousel {
+    background-color: #f9f9f9; /* Or any other background color */
+    // If you want to use a background image
+    // background-image: url('your-background-image.jpg');
+    // background-size: cover;
+    // background-position: center;
+  }
+  
 
   .photos {
     display: flex;

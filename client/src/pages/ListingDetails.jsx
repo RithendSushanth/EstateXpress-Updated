@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import "../styles/ListingDetails.scss";
+
+import { Carousel } from 'react-responsive-carousel';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { useNavigate, useParams } from "react-router-dom";
 import { facilities } from "../data";
 
@@ -103,14 +106,21 @@ const ListingDetails = () => {
           <div></div>
         </div>
 
-        <div className="photos">
+        {/* <div className="photos">
           {listing.listingPhotoPaths?.map((item) => (
             <img
               src={`http://localhost:5000/${item.replace("public", "")}`}
               alt="listing photo"
             />
           ))}
-        </div>
+        </div> */}
+         <Carousel showThumbs={false} className="carousel">
+          {listing.listingPhotoPaths?.map((item) => (
+            <div key={item}>
+              <img src={`http://localhost:5000/${item.replace('public', '')}`} alt="listing photo" />
+            </div>
+          ))}
+        </Carousel>
 
         <h2>
           {listing.type} in {listing.city}, {listing.province},{" "}

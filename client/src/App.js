@@ -12,6 +12,9 @@ import PropertyList from './pages/PropertyList';
 import ReservationList from './pages/ReservationList';
 import CategoryPage from './pages/CategoryPage';
 import SearchPage from './pages/SearchPage';
+import AboutPage from './pages/AboutPage';
+import Terms from './pages/Terms';
+import Refund from './pages/Refund';
 
 function App() {
   return (
@@ -21,6 +24,9 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/refund" element={<Refund />} />
           <Route path="/create-listing" element={<CreateListing />} />
           <Route path="/properties/:listingId" element={<ListingDetails />} />
           <Route path="/properties/category/:category" element={<CategoryPage />} />
