@@ -49,18 +49,23 @@ const ListingCard = ({
 
   const patchWishList = async () => {
     if (user?._id !== creator._id) {
-    const response = await fetch(
-      `http://localhost:5000/users/${user?._id}/${listingId}`,
-      {
-        method: "PATCH",
-        header: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    const data = await response.json();
-    dispatch(setWishList(data.wishList));
-  } else { return }
+      const response = await fetch(
+        `http://localhost:5000/users/${user?._id}/${listingId}`,
+        {
+          method: "PATCH",
+          header: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      dispatch(setWishList(data.wishList));
+    } else { return }
+  };
+
+  const handleEdit = (e) => {
+    e.stopPropagation(); // Prevents the click event from propagating to the parent div
+    navigate(`/properties/${listingId}/edit`); // Navigate to the edit property page
   };
 
   return (
@@ -127,6 +132,12 @@ const ListingCard = ({
         </>
       )}
 
+      {user?._id === creator._id && (
+        <button className="edit-button" onClick={handleEdit}>
+          Edit Property
+        </button>
+      )}
+
       <button
         className="favorite"
         onClick={(e) => {
@@ -146,3 +157,4 @@ const ListingCard = ({
 };
 
 export default ListingCard;
+

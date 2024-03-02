@@ -49,7 +49,7 @@ router.post("/create", upload.array("listingPhotos"), async (req, res) => {
 
     const listingPhotoPaths = listingPhotos.map((file) => file.path)
 
-    const newListing = new Listing({
+    const data = {
       creator,
       category,
       type,
@@ -69,11 +69,38 @@ router.post("/create", upload.array("listingPhotos"), async (req, res) => {
       highlight,
       highlightDesc,
       price,
-    })
+    }
+
+    const newListing = new Listing(data)
 
     await newListing.save()
 
+    try {
+      const user = await User.findOne({ _id: creator })
+
+      console.log(user.propertyList);
+      
+      if(user){
+        if (!user.propertyList) {
+          user.propertyList = [];
+      }
+
+        user.propertyList.push(data);
+
+        await user.save();
+      }
+
+      
+
+    
+    } catch (err) {
+      console.log(err)
+      res.status(404).json({ message: "Error updating property list", error: err.message })
+    }
+
+
     res.status(200).json(newListing)
+
   } catch (err) {
     res.status(409).json({ message: "Fail to create Listing", error: err.message })
     console.log(err)
@@ -134,5 +161,84 @@ router.get("/:listingId", async (req, res) => {
     res.status(404).json({ message: "Listing not found!", error: err.message })
   }
 })
+
+/* EDIT LISTING */
+router.put("/edit/:listingId", async (req, res) => {
+  console.log(req.body)
+  console.log({ listingId: req.params.listingId })
+  try {
+    const { listingId } = req.params;
+    const {
+      category,
+      type,
+      streetAddress,
+      aptSuite,
+      city,
+      province,
+      country,
+      guestCount,
+      bedroomCount,
+      bedCount,
+      bathroomCount,
+      amenities,
+      title,
+      description,
+      highlight,
+      highlightDesc,
+      price,
+    } = req.body;
+
+    const updatedListing = await Listing.findByIdAndUpdate(
+      listingId,
+      {
+        category,
+        type,
+        streetAddress,
+        aptSuite,
+        city,
+        province,
+        country,
+        guestCount,
+        bedroomCount,
+        bedCount,
+        bathroomCount,
+        amenities,
+        title,
+        description,
+        highlight,
+        highlightDesc,
+        price,
+      },
+      { new: true }
+    );
+
+    if (!updatedListing) {
+      return res.status(404).json({ message: "Listing not found" });
+    }
+
+    res.status(200).json(updatedListing);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to update listing", error: err.message });
+  }
+});
+
+/* DELETE LISTING */
+router.delete("/delete/:listingId", async (req, res) => {
+  try {
+    const { listingId } = req.params;
+    const deletedListing = await Listing.findByIdAndDelete(listingId);
+
+    if (!deletedListing) {
+      return res.status(404).json({ message: "Listing not found" });
+    }
+
+    res.status(200).json({ message: "Listing deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to delete listing", error: err.message });
+  }
+});
+
+
+
 
 module.exports = router

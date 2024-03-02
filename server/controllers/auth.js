@@ -28,7 +28,7 @@ const registerUser = async (req, res) => {
       return res.status(409).json({ message: "User already exists!" });
     }
 
-    /* Hass the password */
+    /* Hash the password */
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -86,4 +86,126 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser };
+// const updatePassword = async (req, res) => {
+//   try {
+//     const { userId } = req.params;
+//     const { currentPassword, newPassword } = req.body;
+
+//     // Fetch user by userId and validate current password
+//     const user = await User.findById(userId);
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+//     const isMatch = await bcrypt.compare(currentPassword, user.password);
+//     if (!isMatch) {
+//       return res.status(400).json({ message: "Current password is incorrect" });
+//     }
+
+//     // Hash the new password and update user
+//     const salt = await bcrypt.genSalt();
+//     const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+//     user.password = hashedPassword;
+//     await user.save();
+
+//     res.status(200).json({ message: "Password updated successfully" });
+//   } catch (error) {
+//     console.error("Error updating password:", error);
+//     res.status(500).json({ message: "Failed to update password", error: error.message });
+//   }
+// };
+const updatePassword = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    console.log({ userId });
+    const { currentPassword, newPassword } = req.body;
+    console.log({ currentPassword, newPassword });
+
+    // Fetch user by userId
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Validate current password
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Current password is incorrect" });
+    }
+
+    // Update user password
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    console.error("Error updating password:", error);
+    res.status(500).json({ message: "Failed to update password", error: error.message });
+  }
+};
+
+
+
+
+// Admin
+const Admin = require("../models/Admin");
+
+/* Admin registration controller */
+const registerAdmin = async (req, res) => {
+  try {
+    const { firstName, lastName, email, password } = req.body;
+    const existingAdmin = await Admin.findOne({ email });
+    if (existingAdmin) {
+      return res.status(409).json({ message: "Admin already exists!" });
+    }
+
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const newAdmin = new Admin({
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword,
+    });
+
+    await newAdmin.save();
+
+    res.status(200).json({ message: "Admin registered successfully!", admin: newAdmin });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Registration failed!", error: err.message });
+  }
+};
+
+/* Admin login controller */
+const loginAdmin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const admin = await Admin.findOne({ email });
+    if (!admin) {
+      return res.status(409).json({ message: "Admin doesn't exist!" });
+    }
+
+    const isMatch = await bcrypt.compare(password, admin.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid Credentials!" });
+    }
+
+    const token = jwt.sign({ id: admin._id }, process.env.JWT_SECRET);
+    delete admin.password;
+
+    res.status(200).json({ token, admin });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
+
+module.exports = { registerUser, loginUser, updatePassword, registerAdmin, loginAdmin  };

@@ -11,13 +11,70 @@ import "react-date-range/dist/theme/default.css";
 import { DateRange } from "react-date-range";
 import Loader from "../components/Loader";
 import Navbar from "../components/Navbar";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Footer from "../components/Footer"
 
+
+import PaymentGateway from "../components/PaymentGateway";
+
 const ListingDetails = () => {
+
+
+   // Script loading function
+   function loadScript(src) {
+    return new Promise((resolve) => {
+        const script = document.createElement("script");
+        script.src = src;
+        script.onload = () => {
+            resolve(true);
+        };
+        script.onerror = () => {
+            resolve(false);
+        };
+        document.body.appendChild(script);
+    });
+}
+
+useEffect(() => {
+  async function initializeRazorpay() {
+    const res = await loadScript(
+      "https://checkout.razorpay.com/v1/checkout.js"
+    );
+
+    if (!res) {
+      alert("Razorpay SDK failed to load. Are you online?");
+    }
+  }
+
+  
+  initializeRazorpay();
+}, []);
+
+
+
+
+// Object to pass to payment gateway
+// const paymentInfo = {
+//   "totalCostInPaisa":listing.price * dayCount,
+//   "userID": userID,
+//   'dispatch': useDispatch(),
+// }
+
+
+
+
+
+
+
+
+
+
+
+
   const [loading, setLoading] = useState(true);
 
   const { listingId } = useParams();
+
   const [listing, setListing] = useState(null);
 
   const getListingDetails = async () => {
@@ -30,6 +87,7 @@ const ListingDetails = () => {
       );
 
       const data = await response.json();
+      console.log(data);
       setListing(data);
       setLoading(false);
     } catch (err) {
@@ -67,32 +125,52 @@ const ListingDetails = () => {
 
   const navigate = useNavigate()
 
-  const handleSubmit = async () => {
-    try {
-      const bookingForm = {
-        customerId,
-        listingId,
-        hostId: listing.creator._id,
-        startDate: dateRange[0].startDate.toDateString(),
-        endDate: dateRange[0].endDate.toDateString(),
-        totalPrice: listing.price * dayCount,
-      }
+  // const handleSubmit = async () => {
+  //   try {
+  //     const bookingForm = {
+  //       customerId,
+  //       listingId,
+  //       hostId: listing.creator._id,
+  //       startDate: dateRange[0].startDate.toDateString(),
+  //       endDate: dateRange[0].endDate.toDateString(),
+  //       totalPrice: listing.price * dayCount,
+  //     }
 
-      const response = await fetch("http://localhost:5000/bookings/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(bookingForm)
-      })
+  //     const response = await fetch("http://localhost:5000/bookings/create", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(bookingForm)
+  //     })
 
-      if (response.ok) {
-        navigate(`/${customerId}/trips`)
-      }
-    } catch (err) {
-      console.log("Submit Booking Failed.", err.message)
-    }
+  //     if (response.ok) {
+  //       navigate(`/${customerId}/trips`)
+  //     }
+  //   } catch (err) {
+  //     console.log("Submit Booking Failed.", err.message)
+  //   }
+
+
+  // }
+
+
+  
+  
+     // Object to pass to payment gateway
+     const paymentInfo = {
+      customerId,
+      dayCount,
+      listingId:listingId,
+      daterange: dateRange,
+      listing:listing,
+      totalCostInPaisa:listing?.price * dayCount,
+      userID: customerId,
+      dispatch: useDispatch(),
+    
   }
+   
+  
 
   return loading ? (
     <Loader />
@@ -189,7 +267,7 @@ const ListingDetails = () => {
               <p>Start Date: {dateRange[0].startDate.toDateString()}</p>
               <p>End Date: {dateRange[0].endDate.toDateString()}</p>
 
-              <button className="button" type="submit" onClick={handleSubmit}>
+              <button className="button" type="submit" onClick={()=> PaymentGateway(paymentInfo)}>
                 BOOKING
               </button>
             </div>

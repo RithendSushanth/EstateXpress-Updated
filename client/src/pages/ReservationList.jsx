@@ -17,13 +17,15 @@ const ReservationList = () => {
   const getReservationList = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/users/${userId}/reservations`,
+        `http://localhost:5000/users/${userId}/trips`,
         {
           method: "GET",
         }
       );
 
+      
       const data = await response.json();
+      console.log(data);
       dispatch(setReservationList(data));
       setLoading(false);
     } catch (err) {
@@ -35,14 +37,21 @@ const ReservationList = () => {
     getReservationList();
   }, []);
 
+
+  const upcomingReservations = reservationList.filter(
+    (reservation) => new Date(reservation.endDate) > new Date()
+  );
+
+
+  
   return loading ? (
     <Loader />
   ) : (
     <>
       <Navbar />
-      <h1 className="title-list">Your Reservation List</h1>
+      <h1 className="title-list">Your Upcoming Reservation List</h1>
       <div className="list">
-        {reservationList?.map(({ listingId, hostId, startDate, endDate, totalPrice, booking=true }) => (
+        {upcomingReservations?.map(({ listingId, hostId, startDate, endDate, totalPrice, booking=true }) => (
           <ListingCard
             listingId={listingId._id}
             creator={hostId._id}
