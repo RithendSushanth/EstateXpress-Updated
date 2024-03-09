@@ -15,7 +15,7 @@ export default function AdminUserListings() {
 
         console.log("HELLO");
 
-        axios.post("http://localhost:5000/admin/user_listings", { userID },
+        axios.post("http://localhost:5000/admin/user_listings", { userID: userID.userID },
             {
                 headers: {
                     "Content-Type": "application/json",

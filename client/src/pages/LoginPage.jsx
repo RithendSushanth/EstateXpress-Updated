@@ -45,6 +45,7 @@ const LoginPage = () => {
   return (
     <div className="login">
       <div className="login_content">
+        <h2 className="login_content_title">Login</h2>
         <form className="login_content_form" onSubmit={handleSubmit}>
           <input
             type="email"
@@ -62,10 +63,15 @@ const LoginPage = () => {
           />
           <button type="submit">LOG IN</button>
         </form>
-        <a href="/register">Don't have an account? Sign In Here</a>
+        <br />
+        <a href="/register">Don't have an account? Sign Up Here</a>
+        <br />
+        <br />
+        <a href="/admin/login">Are you an admin?</a>
       </div>
     </div>
   );
+
 };
 
 export default LoginPage;

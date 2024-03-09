@@ -7,87 +7,55 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
   background: url("../../public/assets/login.jpg") center;
   background-size: cover;
+}
 
-  &_content {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    width: 40%;
-    padding: 40px;
-    background-color: rgba(0, 0, 0, 0.8);
-    border-radius: 20px;
+.login_content_title {
+  color: white;
+} 
 
-    @include lg {
-      width: 60%
-    }
+.login_content {
+  width: 80%;
+  max-width: 400px;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 10px;
+  text-align: center;
+}
 
-    @include mm {
-      width: 80%
-    }
+.login_content_form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
 
-    &_form {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 15px;
+.login_content_form input {
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  outline: none;
+}
 
-      input {
-        width: 100%;
-        padding: 7px 15px;
-        background-color: transparent;
-        border: none;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-        outline: none;
-        text-align: center;
-        color: white;
+.login_content_form button {
+  padding: 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
 
-        input:not(:placeholder-shown):focus {
-          background: transparent; /* or background: none; */
-        }
+.login_content a {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
 
-        &::placeholder {
-          color: white;
-        }
-      }
-
-      button {
-        margin-top: 15px;
-
-        @include buttonStyle;
-        width: 50%;
-
-        &:hover {
-          box-shadow: 0 0 10px 3px rgba(255, 255, 255);
-        }
-      }
-    }
-
-    &_google {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      margin-top: 20px;
-    }
-
-    a {
-      text-decoration: none;
-      color: white;
-      font-size: 17px;
-      font-weight: 600;
-      text-align: center;
-
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-
-    p {
-      color: white;
-      font-size: 13px;
-      text-align: center;
-    }
+@media (max-width: 768px) {
+  .login_content {
+    width: 90%;
   }
 }
